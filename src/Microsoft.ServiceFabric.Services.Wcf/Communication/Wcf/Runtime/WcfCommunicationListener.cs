@@ -196,7 +196,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Wcf.Runtime
             }
 
             this.endpoint = CreateServiceEndpoint(typeof(TServiceContract), listenerBinding, address);
-            this.host = CreateServiceHost(wcfServiceObject, this.endpoint);
+            this.host = this.CreateServiceHost(wcfServiceObject, this.endpoint);
         }
 
         private WcfCommunicationListener(
@@ -220,7 +220,7 @@ namespace Microsoft.ServiceFabric.Services.Communication.Wcf.Runtime
             }
 
             this.endpoint = CreateServiceEndpoint(typeof(TServiceContract), listenerBinding, address);
-            this.host = CreateServiceHost(wcfServiceType, this.endpoint);
+            this.host = this.CreateServiceHost(wcfServiceType, this.endpoint);
         }
 
         /// <summary>
@@ -310,21 +310,40 @@ namespace Microsoft.ServiceFabric.Services.Communication.Wcf.Runtime
             return endpoint;
         }
 
-        private static ServiceHost CreateServiceHost(
+        /// <summary>
+        /// Creates a new <see cref="ServiceHost"/> instance.
+        /// </summary>
+        /// <param name="wcfServiceObject"></param>
+        /// <param name="endpoint"></param>
+        /// <returns></returns>
+        protected virtual ServiceHost CreateServiceHost(
             object wcfServiceObject,
             ServiceEndpoint endpoint)
         {
-            return ConfigureHost(new ServiceHost(wcfServiceObject), endpoint, true);
+            return this.ConfigureHost(new ServiceHost(wcfServiceObject), endpoint, true);
         }
 
-        private static ServiceHost CreateServiceHost(
+        /// <summary>
+        /// Creates a new <see cref="ServiceHost"/> instance.
+        /// </summary>
+        /// <param name="wcfServiceType"></param>
+        /// <param name="endpoint"></param>
+        /// <returns></returns>
+        protected virtual ServiceHost CreateServiceHost(
             Type wcfServiceType,
             ServiceEndpoint endpoint)
         {
-            return ConfigureHost(new ServiceHost(wcfServiceType), endpoint, false);
+            return this.ConfigureHost(new ServiceHost(wcfServiceType), endpoint, false);
         }
 
-        private static ServiceHost ConfigureHost(ServiceHost host, ServiceEndpoint endpoint, bool singleton)
+        /// <summary>
+        /// Configures the <see cref="ServiceHost"/> instance.
+        /// </summary>
+        /// <param name="host"></param>
+        /// <param name="endpoint"></param>
+        /// <param name="singleton"></param>
+        /// <returns></returns>
+        protected virtual ServiceHost ConfigureHost(ServiceHost host, ServiceEndpoint endpoint, bool singleton)
         {
             var serviceBehavior = host.Description.Behaviors.Find<ServiceBehaviorAttribute>();
             if (serviceBehavior == null)
